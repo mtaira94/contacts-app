@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ContactsService } from '../contacts/contacts.service';
 import { Subscription } from 'rxjs';
-import { Contact } from '../contacts/contact.model';
+import { Contact, addressTypeValues, phoneTypeValues } from '../contacts/contact.model';
 
 @Component({
   templateUrl: './edit-contact.component.html',
@@ -12,11 +12,15 @@ import { Contact } from '../contacts/contact.model';
 export class EditContactComponent implements OnInit, OnDestroy {
   contactSub!: Subscription;
   contactSaveSub!: Subscription;
+  phoneTypes = phoneTypeValues;
+  addressTypes = addressTypeValues;
+
   contactForm = this.fb.nonNullable.group({
     id: '',
+    personal: false,
     firstName: '',
     lastName: '',
-    dateOfBirth: <Date | null>null,
+    dateOfBirth: '',
     favoritesRanking: <number | null>null,
     phone: this.fb.nonNullable.group({
       phoneNumber: '',
@@ -28,7 +32,8 @@ export class EditContactComponent implements OnInit, OnDestroy {
       state: '',
       postalCode: '',
       addressType: '',
-    })
+    }),
+    notes: ''
   });
 
   constructor(
