@@ -25,10 +25,7 @@ export class EditContactComponent implements OnInit, OnDestroy {
     lastName: '',
     dateOfBirth: <Date | null>null,
     favoritesRanking: <number | null>null,
-    phone: this.fb.nonNullable.group({
-      phoneNumber: '',
-      phoneType: ''
-    }),
+    phones: this.fb.array([this.createPhoneGroupt()]),
     address: this.fb.nonNullable.group({
       streetAddress: ['', Validators.required],
       city: ['', Validators.required],
@@ -53,6 +50,10 @@ export class EditContactComponent implements OnInit, OnDestroy {
     this.contactSub = this.contacstService.getContact(contactId).subscribe(contact => {
       if (!contact) return
 
+      for (let i = 1; i < contact.phones.length; i++) {
+        this.addPhone();
+      }
+
       this.contactForm.setValue(contact);
     });
   }
@@ -60,6 +61,17 @@ export class EditContactComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // this.contactSub.unsubscribe();
     // this.contactSaveSub.unsubscribe();
+  }
+
+  addPhone(){
+    this.contactForm.controls.phones.push(this.createPhoneGroupt());
+  }
+
+  createPhoneGroupt() {
+    return this.fb.nonNullable.group({
+      phoneNumber: '',
+      phoneType: ''
+    });
   }
 
   get firstName() {
