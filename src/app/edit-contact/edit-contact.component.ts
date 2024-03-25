@@ -3,8 +3,9 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { ContactsService } from '../contacts/contacts.service';
 import { Subscription } from 'rxjs';
-import { addressTypeValues, phoneTypeValues } from '../contacts/contact.model';
+import { Contact, addressTypeValues, phoneTypeValues } from '../contacts/contact.model';
 import { restrictedWords } from '../validators/restricted-words-validator';
+import { ProfileIconSelectorComponent } from '../profile-icon-selector/profile-icon-selector.component';
 
 @Component({
   templateUrl: './edit-contact.component.html',
@@ -18,10 +19,11 @@ export class EditContactComponent implements OnInit, OnDestroy {
 
   contactForm = this.fb.nonNullable.group({
     id: '',
+    icon: '',
     personal: false,
     firstName: ['', [Validators.required, Validators.minLength(3)]],
     lastName: '',
-    dateOfBirth: '',
+    dateOfBirth: <Date | null>null,
     favoritesRanking: <number | null>null,
     phone: this.fb.nonNullable.group({
       phoneNumber: '',
