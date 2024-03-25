@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ContactsService } from '../contacts/contacts.service';
 import { Subscription } from 'rxjs';
-import { Contact, addressTypeValues, phoneTypeValues } from '../contacts/contact.model';
+import { addressTypeValues, phoneTypeValues } from '../contacts/contact.model';
+import { restrictedWords } from '../validators/restricted-words-validator';
 
 @Component({
   templateUrl: './edit-contact.component.html',
@@ -18,7 +19,7 @@ export class EditContactComponent implements OnInit, OnDestroy {
   contactForm = this.fb.nonNullable.group({
     id: '',
     personal: false,
-    firstName: '',
+    firstName: ['', [Validators.required, Validators.minLength(3)]],
     lastName: '',
     dateOfBirth: '',
     favoritesRanking: <number | null>null,
@@ -27,13 +28,13 @@ export class EditContactComponent implements OnInit, OnDestroy {
       phoneType: ''
     }),
     address: this.fb.nonNullable.group({
-      streetAddress: '',
-      city: '',
-      state: '',
-      postalCode: '',
-      addressType: '',
+      streetAddress: ['', Validators.required],
+      city: ['', Validators.required],
+      state: ['', Validators.required],
+      postalCode: ['', Validators.required],
+      addressType: ['', Validators.required],
     }),
-    notes: ''
+    notes: ['', restrictedWords(['foo', 'bar'])]
   });
 
   constructor(
@@ -57,6 +58,14 @@ export class EditContactComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // this.contactSub.unsubscribe();
     // this.contactSaveSub.unsubscribe();
+  }
+
+  get firstName() {
+    return this.contactForm.controls.firstName;
+  }
+
+  get notes() {
+    return this.contactForm.controls.notes;
   }
 
   saveContact() {
